@@ -1,0 +1,8 @@
+*.pdf
+*.png
+!*Preprint.pdf
+!*Appendix.pdf
+*.RData
+Thumbs.db
+/Exclude
+.Rhistory

@@ -1,0 +1,211 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+```{r}
+####
+#### script prepared by Joshua Becker
+#### contact info at 
+#### www.joshua-becker.com
+####
+```
+## ALTERNATIVE NORMALIZATION REPLICATION
+
+```{r, echo=F, warning=F, message=F,results='hide'}
+### SET YOUR WORKING DIRECTORY!!
+
+### CHECK TO SEE IF THE DATA HAS BEEN LOADED
+### IF NOT, CLEAR MEMORY AND LOAD THE DATA
+rm(list=ls());gc()
+if(file.exists("BeckerCentolaPorter_WisdomOfPartisanCrowds__WithoutLogging.Rdata")) {
+  load("BeckerCentolaPorter_WisdomOfPartisanCrowds__WithoutLogging.Rdata")  
+} else {
+  source('Becker Centola Porter - Wisdom of Partisan Crowds - Data Prep Without Logging.R')
+}
+```
+# RESULTS TOP SECTION
+
+## Are the baseline differences in belief significant?  
+```{r}
+### SUBSETS BY QUESTION 
+Election=subset(myd, q=="Election")
+California=subset(myd, q=="California")
+Taxes=subset(myd, q=="Taxes")
+Unemployment=subset(myd, q=="Unemployment")
+```
+
+
+### Election Question
+```{r}
+wilcox.test(response_1~party, Election)
+```
+### California Question
+```{r}
+wilcox.test(response_1~party, California)
+```
+### Taxes Quesiton
+```{r}
+wilcox.test(response_1~party, Taxes)
+```
+### Unemployment Question
+```{r}
+wilcox.test(response_1~party, Unemployment)
+```
+
+## Is the change in error for social conditions significant?
+
+```{r}
+control = subset(trial, network=="Control")
+social = subset(trial, network=="Social")
+repub_social = subset(trial, network=="Social" & party=="Repub")
+dem_social = subset(trial, network=="Social" & party=="Dem")
+```
+
+### Republicans
+```{r}
+wilcox.test(repub_social$change_err_mean)
+```
+
+### Democrats
+```{r}
+wilcox.test(dem_social$change_err_mean)
+```
+
+## By what % did error change for social network conditions?
+```{r}
+mean(social$change_err_mean)/mean(social$err_mean_1)
+```
+
+## Did error change in the control condition?
+```{r}
+wilcox.test(control$change_err_mean)
+```
+
+## By what % did error change in control condition?
+```{r}
+mean(control$change_err_mean)/mean(control$err_mean_1)
+```
+
+## Was change in error significantly different between control and social?
+```{r}
+wilcox.test(  control$change_err_mean
+            , social$change_err_mean)
+```
+
+## Did standard deviation decrease?
+
+### Socal
+```{r}
+mean(social$change_sd)
+wilcox.test(social$change_sd)
+```
+
+### Control
+```{r}
+mean(control$change_sd)
+wilcox.test(control$change_sd)
+```
+
+### Compare social to control
+```{r}
+wilcox.test(social$change_sd
+            , control$change_sd)
+
+```
+
+## Did individual error decrease?
+
+### Social
+```{r}
+### Percent change
+mean(social$change_err_ind)/mean(social$err_ind_1)
+
+wilcox.test(social$change_err_ind)
+```
+
+### Control
+```{r}
+### Percent change
+mean(control$change_err_ind)/mean(control$err_ind_1)
+
+
+wilcox.test(control$change_err_ind)
+```
+
+### Compare Social and Control
+```{r}
+wilcox.test(social$change_err_ind
+            , control$change_err_ind)
+```
+
+# RESULTS---SUBSECTION ON POLARIZATION
+```{r}
+social_paired = subset(trial_paired, network=="Social")
+control_paired = subset(trial_paired, network=="Control")
+```
+
+## Examining change similarity of mean belief
+
+### Change in similarity of mean belief for social condition
+```{r}
+### 11 out of 12 trials became more similar
+social_paired$diff_mean_change<0
+
+mean(social_paired$diff_mean_change) / mean(social_paired$diff_mean_1)
+wilcox.test(social_paired$diff_mean_change)
+```
+
+### Change in similarity of mean belief for control condition
+```{r}
+### All four control trials became LESS similar
+control_paired$diff_mean_change<0
+
+mean(control_paired$diff_mean_change) / mean(control_paired$diff_mean_1)
+wilcox.test(control_paired$diff_mean_change)
+```
+
+### Compare change in similarity of mean for social and control
+```{r}
+wilcox.test(social_paired$diff_mean_change
+            , control_paired$diff_mean_change)
+
+```
+
+## Examining change similarity of individual beliefs
+
+### Change in pairwise similarity for social groups
+```{r}
+### All 12 trials became more similar
+social_paired$pairwise_change<0
+
+### Percent change
+mean(social_paired$pairwise_change)/mean(social_paired$pairwise_1)
+wilcox.test(social_paired$pairwise_change)
+```
+
+### Change in pairwise similarity for control groups
+```{r}
+### ALl four trials became more similar
+control_paired$pairwise_change<0
+
+### Percent change
+mean(control_paired$pairwise_change)/mean(control_paired$pairwise_1)
+wilcox.test(control_paired$pairwise_change)
+```
+
+### Comparing social to control groups
+```{r}
+wilcox.test(  social_paired$pairwise_change
+            , control_paired$pairwise_change)
+```
+
+### Did social groups with larger error make larger collective revisions?
+```{r}
+### For this question, we look at each individual task 
+### instead of aggregating by trials.
+### We add unique task intercepts to control for within-trial correlation.
+
+social_questions = subset(aggreg, network=="Social")
+summary(lm(change_err_mean ~ err_mean_1 + party + sub_trial, social_questions))
+```

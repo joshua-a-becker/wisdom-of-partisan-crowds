@@ -1,0 +1,5 @@
+*.pdf
+*.png
+*.RData
+Thumbs.db
+/Exclude
