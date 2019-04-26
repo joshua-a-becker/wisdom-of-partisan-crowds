@@ -1,6 +1,8 @@
 # The Wisdom of Partisan Crowds
 This repository contains data and R code for replicating the figures, analyses, and simulations described in The Wisdom of Partisan Crowds by Joshua Becker, Ethan Porter, and Damon Centola.
 
+This project was made possible by the 2017 [Summer Institute in Computational Social Science](http://compsocialscience.github.io/summer-institute)
+
 ## Usage
 1. Clone this repository to your local computer.
 2. For each script to run, be sure to set your working directory to the location of the script.
